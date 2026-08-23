@@ -1,4 +1,4 @@
-package com.joseph.spring_auth_service;
+package com.joseph.springauthservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
