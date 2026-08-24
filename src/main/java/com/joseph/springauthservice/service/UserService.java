@@ -6,6 +6,8 @@ import com.joseph.springauthservice.entity.User;
 import com.joseph.springauthservice.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import com.joseph.springauthservice.exception.UserAlreadyExistsException;
+import com.joseph.springauthservice.exception.UserNotFoundException;
 
 import java.util.List;
 
@@ -25,7 +27,7 @@ public class UserService {
 
     public User create(User user) {
         if (userRepository.existsByEmail(user.getEmail())) {
-            throw new RuntimeException("E-mail já cadastrado");
+            throw new UserAlreadyExistsException("E-mail já cadastrado");
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -42,20 +44,26 @@ public class UserService {
     }
 
     public User findById(Long id) {
+
         return userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+            .orElseThrow(() ->
+                    new UserNotFoundException("Usuário não encontrado"));
     }
 
     public User findByEmail(String email) {
+
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+            .orElseThrow(() ->
+                    new UserNotFoundException("Usuário não encontrado"));
     }
 
     public User update(Long id, CreateUserRequest request) {
         User user = findById(id);
 
-        if (!user.getEmail().equals(request.getEmail()) && userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("E-mail já cadastrado");
+        if (!user.getEmail().equals(request.getEmail())
+            && userRepository.existsByEmail(request.getEmail())) {
+
+                throw new UserAlreadyExistsException("E-mail já cadastrado");
         }
 
         user.setName(request.getName());

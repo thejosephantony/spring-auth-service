@@ -1,15 +1,21 @@
 package com.joseph.springauthservice.controller;
 
 import com.joseph.springauthservice.dto.CreateUserRequest;
+import com.joseph.springauthservice.dto.UserResponse;
 import com.joseph.springauthservice.entity.User;
 import com.joseph.springauthservice.service.UserService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 import java.util.List;
 
+
+@SecurityRequirement(name = "bearerAuth")
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -22,39 +28,63 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public User create(@RequestBody CreateUserRequest request) {
+    public UserResponse create(@Valid @RequestBody CreateUserRequest request) {
+
         User user = new User();
+
         user.setName(request.getName());
         user.setEmail(request.getEmail());
         user.setPassword(request.getPassword());
 
-        return userService.create(user);
+        User createdUser = userService.create(user);
+
+        return UserResponse.fromEntity(createdUser);
     }
 
     @GetMapping
-    public List<User> findAll() {
-        return userService.findAll();
+    public List<UserResponse> findAll() {
+
+        return userService.findAll()
+                .stream()
+                .map(UserResponse::fromEntity)
+                .toList();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> findById(@PathVariable Long id) {
-        return ResponseEntity.ok(userService.findById(id));
+    public ResponseEntity<UserResponse> findById(@PathVariable Long id) {
+
+        User user = userService.findById(id);
+
+        return ResponseEntity.ok(UserResponse.fromEntity(user));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> update(@PathVariable Long id, @RequestBody CreateUserRequest request) {
-        return ResponseEntity.ok(userService.update(id, request));
+    public ResponseEntity<UserResponse> update(
+        @PathVariable Long id,
+        @Valid @RequestBody CreateUserRequest request
+    ) {
+
+        User user = userService.update(id, request);
+
+        return ResponseEntity.ok(UserResponse.fromEntity(user));
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {
+
         userService.delete(id);
     }
 
     @GetMapping("/me")
-    public ResponseEntity<User> getCurrentUser(Authentication authentication) {
+    public ResponseEntity<UserResponse> getCurrentUser(
+            Authentication authentication
+    ) {
+
         String email = authentication.getName();
-        return ResponseEntity.ok(userService.findByEmail(email));
+
+        User user = userService.findByEmail(email);
+
+        return ResponseEntity.ok(UserResponse.fromEntity(user));
     }
 }
