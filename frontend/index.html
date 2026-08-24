@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spring Auth Service - Painel</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Painel de Controle - Spring Auth Service</h1>
+        <section id="login-section" class="card">
+            <h2>Autenticação</h2>
+            <div class="form-group">
+                <label for="email">E-mail</label>
+                <input type="email" id="email" value="admin@admin.com">
+            </div>
+            <div class="form-group">
+                <label for="senha">Senha</label>
+                <input type="password" id="senha" value="123456">
+            </div>
+            <button onclick="fazerLogin()">Entrar</button>
+        </section>
+        <section id="dashboard-section" class="card hidden">
+            <div class="dashboard-header">
+                <h2>Gerenciamento de Usuários</h2>
+                <button class="btn-danger" onclick="fazerLogout()">Sair</button>
+            </div>
+            <div class="card-sub">
+                <h3>Cadastrar Novo Usuário</h3>
+                <div class="form-row">
+                    <input type="text" id="novoNome" placeholder="Nome">
+                    <input type="email" id="novoEmail" placeholder="E-mail">
+                    <input type="password" id="novaSenha" placeholder="Senha">
+                    <button onclick="criarUsuario()">Salvar</button>
+                </div>
+            </div>
+            <div class="table-container">
+                <button onclick="carregarUsuarios()" class="btn-secondary">Atualizar Lista</button>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>E-mail</th>
+                            <th>Role</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-usuarios"></tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
