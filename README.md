@@ -1,12 +1,12 @@
 # 🛡️ Spring Auth Service
 
-[![Java](https://img.shields.io/badge/Java-17-orange.svg)](https://www.oracle.com/java/)
+[![Java](https://img.shields.io/badge/Java-21-orange.svg)](https://www.oracle.com/java/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2-brightgreen.svg)](https://spring.io/projects/spring-boot)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue.svg)](https://www.postgresql.org/)
 [![Swagger](https://img.shields.io/badge/Swagger-OpenAPI-85EA2D.svg)](https://swagger.io/)
 [![JWT](https://img.shields.io/badge/JWT-JSON%20Web%20Token-black.svg)](https://jwt.io/)
 
-Uma API REST desenvolvida em **Java** e **Spring Boot** para autenticação e gestão completa de usuários. Este projeto foi construído como solução para o **Desafio de Seleção - Backend Engineer**, focando em segurança, boas práticas de desenvolvimento (SOLID, Clean Code) e documentação interativa.
+Uma API REST desenvolvida em **Java** e **Spring Boot** para autenticação e gestão completa de usuários. Este projeto foi construído como solução para o **Desafio de Seleção - Backend Engineer**, focando em segurança, boas práticas de desenvolvimento e documentação interativa.
 
 ---
 
@@ -67,15 +67,14 @@ A API possui um `GlobalExceptionHandler` que intercepta exceções e retorna res
 ## 🛠️ Como Executar o Projeto Localmente
 
 ### Pré-requisitos
-* **Java 17** ou superior instalado.
+* **Java 21** instalado.
 * **PostgreSQL** instalado e rodando na porta padrão (`5432`).
 * **Git** para clonar o repositório.
 
 ### 1. Clonar o repositório
 ```bash
-git clone https://github.com/thejosephantony/spring-auth-service.git
+git clone [https://github.com/thejosephantony/spring-auth-service.git](https://github.com/thejosephantony/spring-auth-service.git)
 cd spring-auth-service
-```
 
 ### 2. Configurar o Banco de Dados
 Crie um banco de dados vazio no PostgreSQL (ex: `spring_auth_db`). Em seguida, abra o arquivo `src/main/resources/application.properties` e ajuste as credenciais (URL, usuário e senha) de acordo com a sua máquina:
