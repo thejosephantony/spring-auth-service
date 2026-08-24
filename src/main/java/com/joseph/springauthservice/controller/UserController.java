@@ -3,6 +3,7 @@ package com.joseph.springauthservice.controller;
 import com.joseph.springauthservice.dto.CreateUserRequest;
 import com.joseph.springauthservice.dto.UserResponse;
 import com.joseph.springauthservice.entity.User;
+import com.joseph.springauthservice.entity.Role;
 import com.joseph.springauthservice.service.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
@@ -35,6 +36,7 @@ public class UserController {
         user.setName(request.getName());
         user.setEmail(request.getEmail());
         user.setPassword(request.getPassword());
+        user.setRole(Role.USER);
 
         User createdUser = userService.create(user);
 
