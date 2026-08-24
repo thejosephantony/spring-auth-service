@@ -3,55 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spring Auth Service - Painel</title>
+    <title>Auth Service | Painel Corporativo</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <h1>Painel de Controle - Spring Auth Service</h1>
-        <section id="login-section" class="card">
-            <h2>Autentica��o</h2>
-            <div class="form-group">
-                <label for="email">E-mail</label>
-                <input type="email" id="email" value="admin@admin.com">
+
+    <!-- NAVBAR CORPORATIVA -->
+    <nav class="navbar hidden" id="main-navbar">
+        <div class="nav-brand">
+            <span class="brand-icon">🛡️</span>
+            <h2>Spring Auth Enterprise</h2>
+        </div>
+        <div class="nav-user">
+            <span id="admin-email-display" class="user-badge-text">Carregando...</span>
+            <button class="btn-logout" onclick="fazerLogout()">Encerrar Sessão</button>
+        </div>
+    </nav>
+
+    <div class="app-container">
+        
+        <!-- TELA DE LOGIN (CENTRALIZADA) -->
+        <section id="login-section" class="login-card">
+            <div class="login-header">
+                <div class="logo-circle">🔐</div>
+                <h2>Acesso Restrito</h2>
+                <p>Entre com suas credenciais para gerenciar o sistema</p>
             </div>
             <div class="form-group">
-                <label for="senha">Senha</label>
-                <input type="password" id="senha" value="123456">
+                <label for="email">E-mail corporativo</label>
+                <input type="email" id="email" placeholder="admin@admin.com" value="admin@admin.com">
             </div>
-            <button onclick="fazerLogin()">Entrar</button>
+            <div class="form-group">
+                <label for="senha">Senha de acesso</label>
+                <input type="password" id="senha" placeholder="••••••••" value="admin123">
+            </div>
+            <button class="btn-primary" onclick="fazerLogin()">Autenticar no Sistema</button>
         </section>
-        <section id="dashboard-section" class="card hidden">
-            <div class="dashboard-header">
-                <h2>Gerenciamento de Usu�rios</h2>
-                <button class="btn-danger" onclick="fazerLogout()">Sair</button>
+
+        <!-- PAINEL DO ADMINISTRADOR -->
+        <section id="admin-dashboard" class="dashboard-section hidden">
+            <div class="section-title">
+                <div>
+                    <h2>Gestão de Usuários</h2>
+                    <p>Controle central de permissões, perfis e acessos corporativos</p>
+                </div>
+                <button class="btn-secondary" onclick="carregarUsuarios()">🔄 Atualizar Dados</button>
             </div>
-            <div class="card-sub">
-                <h3>Cadastrar Novo Usu�rio</h3>
-                <div class="form-row">
-                    <input type="text" id="novoNome" placeholder="Nome">
-                    <input type="email" id="novoEmail" placeholder="E-mail">
-                    <input type="password" id="novaSenha" placeholder="Senha">
-                    <button onclick="criarUsuario()">Salvar</button>
+
+            <!-- CARD DE CADASTRO -->
+            <div class="card form-card">
+                <h3>➕ Cadastrar Novo Colaborador</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Nome Completo</label>
+                        <input type="text" id="novoNome" placeholder="Ex: Ana Souza">
+                    </div>
+                    <div class="form-group">
+                        <label>E-mail Corporativo</label>
+                        <input type="email" id="novoEmail" placeholder="ana@empresa.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Senha Temporária</label>
+                        <input type="password" id="novaSenha" placeholder="Mínimo 6 caracteres">
+                    </div>
+                    <div class="form-group">
+                        <label>Nível de Acesso (Role)</label>
+                        <select id="novaRole">
+                            <option value="USER">USER (Comum)</option>
+                            <option value="ADMIN">ADMIN (Administrador)</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="btn-primary btn-submit" onclick="criarUsuario()">Salvar Colaborador</button>
+            </div>
+
+            <!-- TABELA DE USUÁRIOS -->
+            <div class="card table-card">
+                <div class="table-header">
+                    <h3>Colaboradores Registrados</h3>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nome</th>
+                                <th>E-mail</th>
+                                <th>Perfil</th>
+                                <th class="text-right">Ações Administrativas</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-usuarios">
+                            <!-- Preenchido dinamicamente via JS -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
-            <div class="table-container">
-                <button onclick="carregarUsuarios()" class="btn-secondary">Atualizar Lista</button>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nome</th>
-                            <th>E-mail</th>
-                            <th>Role</th>
-                            <th>A��es</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabela-usuarios"></tbody>
-                </table>
+        </section>
+
+                <!-- PAINEL DO USUÁRIO COMUM -->
+        <section id="user-dashboard" class="dashboard-section hidden">
+            <div class="section-title">
+                <h2>Meu Perfil Corporativo</h2>
+                <p>Informações da sua conta no ecossistema</p>
+            </div>
+
+            <div class="card profile-card" style="flex-direction: column; align-items: flex-start;">
+                <div style="display: flex; align-items: center; gap: 24px; width: 100%; margin-bottom: 20px;">
+                    <div class="profile-avatar">👤</div>
+                    <div class="profile-info-grid">
+                        <div class="info-item">
+                            <span class="info-label">Identificador (ID)</span>
+                            <span class="info-value" id="me-id">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Nome Completo</span>
+                            <span class="info-value" id="me-nome">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">E-mail Corporativo</span>
+                            <span class="info-value" id="me-email">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Nível de Permissão</span>
+                            <span id="me-role" class="badge badge-user">-</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn-secondary" onclick="editarMeuPerfil()">✏️ Atualizar Meus Dados / Senha</button>
             </div>
         </section>
     </div>
+
     <script src="app.js"></script>
 </body>
 </html>

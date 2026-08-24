@@ -1,11 +1,10 @@
 package com.joseph.springauthservice.dto;
 
-import com.joseph.springauthservice.entity.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-public class CreateUserRequest {
+public class UpdateUserRequest {
 
     @NotBlank(message = "Nome é obrigatório")
     private String name;
@@ -14,11 +13,8 @@ public class CreateUserRequest {
     @Email(message = "E-mail inválido")
     private String email;
 
-    @NotBlank(message = "Senha é obrigatória")
     @Size(min = 6, message = "A senha deve possuir pelo menos 6 caracteres")
     private String password;
-
-    private Role role;
 
     // Getters e Setters
     public String getName() { return name; }
@@ -27,6 +23,4 @@ public class CreateUserRequest {
     public void setEmail(String email) { this.email = email; }
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
-    public Role getRole() { return role; }
-    public void setRole(Role role) { this.role = role; }
 }

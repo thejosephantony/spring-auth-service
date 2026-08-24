@@ -1,6 +1,7 @@
 package com.joseph.springauthservice.service;
 
 import com.joseph.springauthservice.dto.CreateUserRequest;
+import com.joseph.springauthservice.dto.UpdateUserRequest;
 import com.joseph.springauthservice.entity.Role;
 import com.joseph.springauthservice.entity.User;
 import com.joseph.springauthservice.repository.UserRepository;
@@ -57,7 +58,7 @@ public class UserService {
                     new UserNotFoundException("Usuário não encontrado"));
     }
 
-    public User update(Long id, CreateUserRequest request) {
+    public User update(Long id, UpdateUserRequest request) { // <--- Altere aqui para UpdateUserRequest
         User user = findById(id);
 
         if (!user.getEmail().equals(request.getEmail())
@@ -69,6 +70,7 @@ public class UserService {
         user.setName(request.getName());
         user.setEmail(request.getEmail());
 
+        // Se a senha foi informada na edição, atualiza codificando-a; caso contrário, mantém a atual
         if (request.getPassword() != null && !request.getPassword().isBlank()) {
             user.setPassword(passwordEncoder.encode(request.getPassword()));
         }

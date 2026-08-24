@@ -27,26 +27,28 @@ public class SecurityConfig {
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        return http
-                .csrf(csrf -> csrf.disable())
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                        .requestMatchers(
-                                "/v3/api-docs/**",
-                                "/swagger-ui/**",
-                                "/swagger-ui.html"
-                        ).permitAll()
-                        .requestMatchers(HttpMethod.POST, "/users").hasRole("ADMIN")
-                        .anyRequest().authenticated()
-                )
-                .addFilterBefore(
-                        securityFilter,
-                        org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class
-                )
-                .build();
-    }
+            return http
+                    .csrf(csrf -> csrf.disable())
+                    .sessionManagement(session ->
+                            session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                    .authorizeHttpRequests(authorize -> authorize
+                            .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
+                            .requestMatchers(
+                                    "/v3/api-docs/**",
+                                    "/swagger-ui/**",
+                                    "/swagger-ui.html"
+                            ).permitAll()
+                            .requestMatchers(HttpMethod.POST, "/users").hasRole("ADMIN")
+                            .requestMatchers(HttpMethod.PUT, "/users/me").authenticated()
+                            .requestMatchers(HttpMethod.PUT, "/users/**").hasRole("ADMIN")
+                            .anyRequest().authenticated()
+                    )
+                    .addFilterBefore(
+                            securityFilter,
+                            org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class
+                    )
+                    .build();
+        }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
