@@ -12,7 +12,7 @@ Uma API REST desenvolvida em **Java** e **Spring Boot** para autenticação e ge
 
 ## 🚀 Tecnologias Utilizadas
 
-* **Linguagem:** Java 17
+* **Linguagem:** Java 21
 * **Framework:** Spring Boot 3 (Web, Data JPA, Security, Validation)
 * **Banco de Dados:** PostgreSQL
 * **Segurança:** Spring Security com JWT (JSON Web Token)
