@@ -279,6 +279,14 @@ Administradores podem:
 
 ### Login
 
+## 👤 Administrador inicial
+
+Para o ambiente de desenvolvimento, configure:
+
+```powershell
+$env:ADMIN_EMAIL="admin@admin.com"
+$env:ADMIN_PASSWORD="admin123"
+
 ```http
 POST /auth/login
 ```
