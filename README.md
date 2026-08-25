@@ -296,7 +296,7 @@ Exemplo:
 ```json
 {
   "email": "admin@admin.com",
-  "password": "********"
+  "password": "admin123"
 }
 ```
 
