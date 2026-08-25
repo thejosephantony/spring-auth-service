@@ -102,7 +102,7 @@
             </div>
         </section>
 
-                <!-- PAINEL DO USUÁRIO COMUM -->
+        <!-- PAINEL DO USUÁRIO COMUM -->
         <section id="user-dashboard" class="dashboard-section hidden">
             <div class="section-title">
                 <h2>Meu Perfil Corporativo</h2>
@@ -131,9 +131,33 @@
                         </div>
                     </div>
                 </div>
-                <button class="btn-secondary" onclick="editarMeuPerfil()">✏️ Atualizar Meus Dados / Senha</button>
+                <button class="btn-secondary" onclick="abrirModalEdicao('me', document.getElementById('me-nome').innerText, document.getElementById('me-email').innerText, true)">✏️ Atualizar Meus Dados / Senha</button>
             </div>
         </section>
+
+        <!-- MODAL DE EDIÇÃO PROFISSIONAL -->
+        <div id="edit-modal" class="modal-overlay hidden">
+            <div class="modal-content card">
+                <h3 id="modal-title">Editar Colaborador</h3>
+                <div class="form-group">
+                    <label>Nome Completo</label>
+                    <input type="text" id="edit-nome">
+                </div>
+                <div class="form-group">
+                    <label>E-mail Corporativo</label>
+                    <input type="email" id="edit-email">
+                </div>
+                <div class="form-group">
+                    <label>Nova Senha</label>
+                    <input type="password" id="edit-senha" placeholder="Deixe em branco para manter a atual">
+                </div>
+                <div class="modal-actions">
+                    <button class="btn-secondary" onclick="fecharModal()">Cancelar</button>
+                    <button class="btn-primary btn-submit" onclick="salvarEdicao()">Salvar Alterações</button>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script src="app.js"></script>

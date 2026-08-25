@@ -8,24 +8,29 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Representa um usuário do sistema.
+ */
 @Entity
-@Table(name = "tb_users") // Evita conflitos com a palavra reservada 'user' no PostgreSQL
+@Table(name = "tb_users")
 public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false, unique = true)
     private String email;
 
+    @Column(nullable = false)
     private String password;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Role role;
-
-    // --- GETTERS E SETTERS ---
 
     public Long getId() {
         return id;
@@ -51,6 +56,11 @@ public class User implements UserDetails {
         this.email = email;
     }
 
+    /**
+     * Retorna a senha do usuário armazenada de forma criptografada.
+     *
+     */
+    @Override
     public String getPassword() {
         return password;
     }
@@ -67,20 +77,30 @@ public class User implements UserDetails {
         this.role = role;
     }
 
-    // --- MÉTODOS OBRIGATÓRIOS DO USERDETAILS ---
-
+    /**
+     * Define as permissões concedidas ao usuário de acordo com seu perfil.
+     *
+     */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if (this.role == Role.ADMIN) {
-            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
-        } else {
-            return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        if (role == Role.ADMIN) {
+            return List.of(
+                    new SimpleGrantedAuthority("ROLE_ADMIN"),
+                    new SimpleGrantedAuthority("ROLE_USER")
+            );
         }
+
+        return List.of(
+                new SimpleGrantedAuthority("ROLE_USER")
+        );
     }
 
+    /**
+     * Retorna o identificador utilizado pelo Spring Security para autenticação.
+     */
     @Override
     public String getUsername() {
-        return this.email; // O Spring usa como 'username', mas o nosso login é por e-mail
+        return email;
     }
 
     @Override

@@ -1,140 +1,970 @@
 # 🛡️ Spring Auth Service
 
-[![Java](https://img.shields.io/badge/Java-21-orange.svg)](https://www.oracle.com/java/)
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2-brightgreen.svg)](https://spring.io/projects/spring-boot)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue.svg)](https://www.postgresql.org/)
-[![Swagger](https://img.shields.io/badge/Swagger-OpenAPI-85EA2D.svg)](https://swagger.io/)
-[![JWT](https://img.shields.io/badge/JWT-JSON%20Web%20Token-black.svg)](https://jwt.io/)
+API REST para autenticação, autorização e gerenciamento de usuários, desenvolvida com Java e Spring Boot.
 
-Uma API REST desenvolvida em **Java** e **Spring Boot** para autenticação e gestão completa de usuários. Este projeto foi construído como solução para o **Desafio de Seleção - Backend Engineer**, focando em segurança, boas práticas de desenvolvimento e documentação interativa.
+O projeto implementa autenticação baseada em JWT, controle de acesso por perfil, CRUD de usuários, persistência em PostgreSQL, validação de dados, tratamento centralizado de exceções e documentação interativa com Swagger/OpenAPI.
+
+Além da API, o projeto possui um frontend desenvolvido em HTML, CSS e JavaScript para consumo dos recursos protegidos.
 
 ---
 
-## 🚀 Tecnologias Utilizadas
+## 🎯 Objetivo
 
-* **Linguagem:** Java 21
-* **Framework:** Spring Boot 3 (Web, Data JPA, Security, Validation)
-* **Banco de Dados:** PostgreSQL
-* **Segurança:** Spring Security com JWT (JSON Web Token)
-* **Documentação:** Springdoc OpenAPI (Swagger UI)
-* **Testes:** JUnit 5 e Mockito
-* **Gerenciamento de Dependências:** Maven
+O objetivo do projeto é demonstrar a implementação de uma API REST com autenticação e autorização utilizando Spring Security e JWT.
 
----
+A aplicação possui:
 
-## ⚙️ Funcionalidades Principais
-
-* **🔐 Autenticação JWT:** Login seguro que gera e valida tokens de acesso para proteger rotas sensíveis.
-* **👥 Gestão de Usuários (CRUD):** Criação, listagem, busca detalhada por ID, atualização e remoção de registros.
-* **🛡️ Controle de Acesso (RBAC):** Somente usuários com a *role* `ADMIN` possuem privilégios para cadastrar, atualizar ou deletar outros usuários.
-* **👤 Perfil do Usuário:** Endpoint exclusivo (`/users/me`) para que o usuário autenticado consulte seus próprios dados.
-* **⚙️ Seed de Dados Inicial:** Criação automática de um usuário Administrador padrão na primeira inicialização da aplicação para viabilizar o uso do sistema.
-
----
-
-## 🗺️ Estrutura de Endpoints da API
-
-Abaixo estão as rotas disponíveis na aplicação. As rotas marcadas com o cadeado (🔒) exigem o envio do token JWT no header `Authorization: Bearer <token>`.
-
-### 🔑 Autenticação
-| Método | Endpoint | Descrição | Acesso |
-| :--- | :--- | :--- | :--- |
-| `POST` | `/auth/login` | Autentica um usuário e retorna o token JWT | Público |
-
-### 👥 Usuários
-| Método | Endpoint | Descrição | Acesso |
-| :--- | :--- | :--- | :--- |
-| `POST` | `/users` | Cria um novo usuário | 🔒 Apenas `ADMIN` |
-| `GET` | `/users` | Lista todos os usuários cadastrados | 🔒 `ADMIN` ou `USER` |
-| `GET` | `/users/{id}` | Busca os detalhes de um usuário específico | 🔒 `ADMIN` ou `USER` |
-| `GET` | `/users/me` | Retorna os dados do usuário logado no momento | 🔒 `ADMIN` ou `USER` |
-| `PUT` | `/users/{id}` | Atualiza os dados de um usuário | 🔒 Apenas `ADMIN` |
-| `DELETE` | `/users/{id}` | Remove um usuário do sistema | 🔒 Apenas `ADMIN` |
+- autenticação de usuários;
+- geração e validação de tokens JWT;
+- controle de acesso por perfil (`USER` e `ADMIN`);
+- CRUD de usuários;
+- consulta do usuário autenticado;
+- atualização do próprio perfil;
+- operações administrativas sobre usuários;
+- armazenamento seguro de senhas utilizando BCrypt;
+- validação dos dados recebidos pela API;
+- tratamento centralizado de exceções;
+- persistência em PostgreSQL;
+- documentação da API utilizando Swagger/OpenAPI;
+- frontend para consumo da API.
 
 ---
 
-## 🛑 Tratamento de Erros
+# 🛠️ Tecnologias utilizadas
 
-A API possui um `GlobalExceptionHandler` que intercepta exceções e retorna respostas JSON padronizadas e semânticas, utilizando os códigos HTTP corretos:
-* `400 Bad Request`: Dados inválidos enviados no corpo da requisição.
-* `401 Unauthorized`: Tentativa de acesso sem token, com token inválido ou expirado.
-* `403 Forbidden`: Usuário autenticado, mas sem permissão (`role`) para acessar o recurso.
-* `404 Not Found`: Recurso ou usuário não encontrado no banco de dados.
-* `409 Conflict`: Tentativa de cadastrar um e-mail que já existe no sistema.
+## Backend
+
+- Java 21
+- Spring Boot 3.2.2
+- Spring Web
+- Spring Data JPA
+- Spring Security
+- Bean Validation
+- PostgreSQL
+- Auth0 Java JWT
+- Swagger/OpenAPI
+- Maven
+
+## Frontend
+
+- HTML5
+- CSS3
+- JavaScript
 
 ---
 
-## 🛠️ Como Executar o Projeto Localmente
+# 🏗️ Arquitetura
 
-### Pré-requisitos
-* **Java 21** instalado.
-* **PostgreSQL** instalado e rodando na porta padrão (`5432`).
-* **Git** para clonar o repositório.
+A aplicação segue uma arquitetura em camadas, separando as responsabilidades entre controllers, services e repositories.
 
-### 1. Clonar o repositório
-```bash
-git clone [https://github.com/thejosephantony/spring-auth-service.git](https://github.com/thejosephantony/spring-auth-service.git)
-cd spring-auth-service
+```text
+                    ┌──────────────────┐
+                    │     Frontend     │
+                    │    HTML/CSS/JS   │
+                    └────────┬─────────┘
+                             │
+                             ▼
+                    ┌──────────────────┐
+                    │    Controller    │
+                    └────────┬─────────┘
+                             │
+                             ▼
+                    ┌──────────────────┐
+                    │     Service      │
+                    └────────┬─────────┘
+                             │
+                             ▼
+                    ┌──────────────────┐
+                    │    Repository    │
+                    └────────┬─────────┘
+                             │
+                             ▼
+                    ┌──────────────────┐
+                    │    PostgreSQL    │
+                    └──────────────────┘
+```
 
-### 2. Configurar o Banco de Dados
-Crie um banco de dados vazio no PostgreSQL (ex: `spring_auth_db`). Em seguida, abra o arquivo `src/main/resources/application.properties` e ajuste as credenciais (URL, usuário e senha) de acordo com a sua máquina:
+O fluxo de autenticação utiliza JWT:
+
+```text
+Login
+  │
+  ▼
+AuthController
+  │
+  ▼
+AuthenticationManager
+  │
+  ▼
+UserRepository
+  │
+  ▼
+Validação da senha
+  │
+  ▼
+TokenService
+  │
+  ▼
+JWT
+```
+
+Nas requisições protegidas:
+
+```text
+HTTP Request
+     │
+     ▼
+Authorization: Bearer <JWT>
+     │
+     ▼
+SecurityFilter
+     │
+     ▼
+TokenService
+     │
+     ▼
+Validação do JWT
+     │
+     ▼
+Spring Security
+     │
+     ▼
+Controller
+```
+
+---
+
+# 📁 Estrutura do projeto
+
+Principais pacotes:
+
+```text
+src/
+└── main/
+    ├── java/
+    │   └── com/
+    │       └── joseph/
+    │           └── springauthservice/
+    │               ├── config/
+    │               ├── controller/
+    │               ├── dto/
+    │               ├── entity/
+    │               ├── exception/
+    │               ├── repository/
+    │               ├── security/
+    │               └── service/
+    │
+    └── resources/
+        └── application.properties
+```
+
+### Responsabilidade dos principais pacotes
+
+| Pacote | Responsabilidade |
+|---|---|
+| `controller` | Exposição dos endpoints REST |
+| `service` | Regras de negócio |
+| `repository` | Acesso ao banco de dados |
+| `entity` | Entidades persistidas |
+| `dto` | Objetos utilizados nas requisições e respostas |
+| `security` | Filtros e componentes relacionados à autenticação |
+| `config` | Configurações do Spring Security |
+| `exception` | Exceções e tratamento de erros |
+
+---
+
+# 🔐 Autenticação
+
+A autenticação é realizada através do endpoint:
+
+```http
+POST /auth/login
+```
+
+### Requisição
+
+```json
+{
+  "email": "admin@admin.com",
+  "password": "********"
+}
+```
+
+### Resposta
+
+```json
+{
+  "token": "eyJ..."
+}
+```
+
+O token JWT deve ser enviado nas requisições protegidas utilizando o header:
+
+```http
+Authorization: Bearer <token>
+```
+
+A API utiliza autenticação stateless, portanto não mantém sessão HTTP do usuário.
+
+---
+
+# 🔑 JWT
+
+O projeto utiliza JWT para representar a autenticação do usuário.
+
+O `TokenService` é responsável por:
+
+- gerar tokens;
+- definir o emissor do token;
+- definir o usuário associado ao token;
+- definir a expiração;
+- validar tokens recebidos.
+
+A validade configurada atualmente para o token é de **2 horas**.
+
+O segredo utilizado para assinar o token deve ser configurado através de variável de ambiente.
+
+---
+
+# 👥 Perfis de acesso
+
+A aplicação possui dois perfis:
+
+```text
+USER
+ADMIN
+```
+
+## USER
+
+Usuários comuns podem:
+
+- realizar login;
+- consultar recursos protegidos permitidos pela aplicação;
+- consultar o próprio perfil;
+- atualizar o próprio perfil.
+
+## ADMIN
+
+Administradores possuem permissões adicionais para operações administrativas.
+
+Administradores podem:
+
+- criar usuários;
+- consultar usuários;
+- atualizar usuários pelo ID;
+- excluir usuários pelo ID;
+- acessar os recursos disponíveis para usuários autenticados.
+
+---
+
+# 🔒 Regras de autorização
+
+| Método | Endpoint | Público | USER | ADMIN |
+|---|---|---:|---:|---:|
+| `POST` | `/auth/login` | ✅ | ✅ | ✅ |
+| `POST` | `/users` | ❌ | ❌ | ✅ |
+| `GET` | `/users` | ❌ | ✅ | ✅ |
+| `GET` | `/users/{id}` | ❌ | ✅ | ✅ |
+| `GET` | `/users/me` | ❌ | ✅ | ✅ |
+| `PUT` | `/users/me` | ❌ | ✅ | ✅ |
+| `PUT` | `/users/{id}` | ❌ | ❌ | ✅ |
+| `DELETE` | `/users/{id}` | ❌ | ❌ | ✅ |
+
+---
+
+# 📚 Endpoints
+
+## 🔐 Autenticação
+
+### Login
+
+```http
+POST /auth/login
+```
+
+Exemplo:
+
+```json
+{
+  "email": "admin@admin.com",
+  "password": "********"
+}
+```
+
+Resposta:
+
+```json
+{
+  "token": "eyJ..."
+}
+```
+
+---
+
+# 👤 Usuários
+
+## Criar usuário
+
+```http
+POST /users
+```
+
+Requer:
+
+```text
+ADMIN
+```
+
+Exemplo:
+
+```json
+{
+  "name": "Joseph",
+  "email": "joseph@example.com",
+  "password": "123456"
+}
+```
+
+A senha é armazenada utilizando BCrypt e não é retornada pela API.
+
+Resposta:
+
+```json
+{
+  "id": 1,
+  "name": "Joseph",
+  "email": "joseph@example.com",
+  "role": "USER"
+}
+```
+
+Status:
+
+```text
+201 Created
+```
+
+---
+
+## Listar usuários
+
+```http
+GET /users
+```
+
+Requer autenticação.
+
+Resposta:
+
+```json
+[
+  {
+    "id": 1,
+    "name": "Joseph",
+    "email": "joseph@example.com",
+    "role": "USER"
+  }
+]
+```
+
+Status:
+
+```text
+200 OK
+```
+
+---
+
+## Buscar usuário por ID
+
+```http
+GET /users/{id}
+```
+
+Exemplo:
+
+```http
+GET /users/1
+```
+
+Requer autenticação.
+
+Resposta:
+
+```json
+{
+  "id": 1,
+  "name": "Joseph",
+  "email": "joseph@example.com",
+  "role": "USER"
+}
+```
+
+Status:
+
+```text
+200 OK
+```
+
+---
+
+## Consultar usuário autenticado
+
+```http
+GET /users/me
+```
+
+Requer autenticação.
+
+O usuário é identificado através do JWT enviado na requisição.
+
+Resposta:
+
+```json
+{
+  "id": 1,
+  "name": "Joseph",
+  "email": "joseph@example.com",
+  "role": "USER"
+}
+```
+
+Status:
+
+```text
+200 OK
+```
+
+---
+
+## Atualizar próprio perfil
+
+```http
+PUT /users/me
+```
+
+Requer autenticação.
+
+Exemplo:
+
+```json
+{
+  "name": "Joseph Atualizado",
+  "email": "novo@email.com",
+  "password": "654321"
+}
+```
+
+A senha somente é alterada quando uma nova senha válida é informada.
+
+Status:
+
+```text
+200 OK
+```
+
+---
+
+## Atualizar usuário por ID
+
+```http
+PUT /users/{id}
+```
+
+Requer:
+
+```text
+ADMIN
+```
+
+Exemplo:
+
+```http
+PUT /users/2
+```
+
+```json
+{
+  "name": "Usuário Atualizado",
+  "email": "usuario@email.com",
+  "password": "654321"
+}
+```
+
+Status:
+
+```text
+200 OK
+```
+
+---
+
+## Excluir usuário
+
+```http
+DELETE /users/{id}
+```
+
+Requer:
+
+```text
+ADMIN
+```
+
+Exemplo:
+
+```http
+DELETE /users/2
+```
+
+Resposta:
+
+```text
+204 No Content
+```
+
+Após a exclusão, uma consulta ao mesmo ID deverá retornar:
+
+```text
+404 Not Found
+```
+
+---
+
+# ❌ Tratamento de erros
+
+A aplicação possui tratamento centralizado de exceções para erros conhecidos.
+
+## 400 — Bad Request
+
+Utilizado quando os dados enviados não atendem às validações.
+
+Exemplos:
+
+- e-mail inválido;
+- campo obrigatório vazio;
+- senha com tamanho insuficiente;
+- dados inválidos.
+
+Exemplo:
+
+```json
+{
+  "status": 400,
+  "error": "VALIDATION_ERROR",
+  "message": "Dados inválidos"
+}
+```
+
+---
+
+## 401 — Unauthorized
+
+Ocorre quando uma requisição protegida é realizada sem autenticação válida.
+
+Exemplo:
+
+```text
+GET /users/me
+```
+
+sem:
+
+```http
+Authorization: Bearer <token>
+```
+
+---
+
+## 403 — Forbidden
+
+Ocorre quando o usuário está autenticado, mas não possui permissão para realizar determinada operação.
+
+Exemplo:
+
+```text
+USER
+  ↓
+DELETE /users/2
+  ↓
+403 Forbidden
+```
+
+---
+
+## 404 — Not Found
+
+Ocorre quando o usuário solicitado não existe.
+
+Exemplo:
+
+```json
+{
+  "status": 404,
+  "error": "USER_NOT_FOUND",
+  "message": "Usuário não encontrado"
+}
+```
+
+---
+
+## 409 — Conflict
+
+Ocorre quando existe conflito com dados já cadastrados.
+
+Exemplo:
+
+```json
+{
+  "status": 409,
+  "error": "USER_ALREADY_EXISTS",
+  "message": "E-mail já cadastrado"
+}
+```
+
+---
+
+# 🗄️ Banco de dados
+
+O projeto utiliza PostgreSQL.
+
+Configuração local esperada:
+
+```text
+Host: localhost
+Port: 5432
+Database: spring_auth
+User: postgres
+```
+
+A senha do banco não deve ser armazenada diretamente no código-fonte.
+
+A aplicação utiliza:
+
+```text
+DB_PASSWORD
+```
+
+para acessar a senha do PostgreSQL.
+
+---
+
+# 🔐 Variáveis de ambiente
+
+As informações sensíveis devem ser configuradas no ambiente de execução.
+
+Exemplo no PowerShell:
+
+```powershell
+$env:DB_PASSWORD="sua_senha_do_postgres"
+$env:JWT_SECRET="sua_chave_secreta"
+```
+
+O `application.properties` deve utilizar referências às variáveis:
 
 ```properties
-spring.datasource.url=jdbc:postgresql://localhost:5432/spring_auth_db
-spring.datasource.username=seu_usuario
-spring.datasource.password=sua_senha
+spring.datasource.password=${DB_PASSWORD}
+
+api.security.token.secret=${JWT_SECRET}
 ```
 
-### 3. Executar a Aplicação
-O projeto inclui o Maven Wrapper, dispensando a instalação prévia do Maven. No terminal, na raiz do projeto, execute:
+### Importante
 
-**No Windows:**
+Não versionar:
+
+- senhas;
+- tokens;
+- chaves JWT;
+- arquivos `.env` contendo informações sensíveis;
+- credenciais do banco.
+
+---
+
+# ▶️ Como executar
+
+## Pré-requisitos
+
+- Java 21
+- PostgreSQL
+- Git
+
+Docker não é necessário para executar a aplicação localmente.
+
+---
+
+## 1. Clonar o projeto
+
 ```bash
-./mvnw.cmd spring-boot:run
+git clone https://github.com/thejosephantony/spring-auth-service.git
 ```
 
-**No Linux/Mac:**
+Entrar no projeto:
+
+```bash
+cd spring-auth-service
+```
+
+---
+
+## 2. Criar o banco de dados
+
+No PostgreSQL, crie:
+
+```text
+spring_auth
+```
+
+A aplicação será responsável pelas tabelas através da configuração do JPA.
+
+---
+
+## 3. Configurar as variáveis de ambiente
+
+No PowerShell:
+
+```powershell
+$env:DB_PASSWORD="sua_senha_do_postgres"
+```
+
+Configure também o segredo JWT:
+
+```powershell
+$env:JWT_SECRET="sua_chave_secreta"
+```
+
+---
+
+## 4. Executar a aplicação
+
+No Windows:
+
+```powershell
+.\mvnw.cmd spring-boot:run
+```
+
+Para executar a compilação e os testes existentes:
+
+```powershell
+.\mvnw.cmd clean test
+```
+
+No Linux/macOS:
+
 ```bash
 ./mvnw spring-boot:run
 ```
-A aplicação será iniciada e estará disponível em `http://localhost:8080`.
 
 ---
 
-## 🔐 Acesso Inicial
+## 5. Acessar a aplicação
 
-Para que você não fique trancado fora do sistema, a aplicação gera automaticamente um **Administrador Inicial** na primeira execução [cite: 2]. Utilize estas credenciais no endpoint `/auth/login` para testar:
+A API estará disponível em:
 
-* **E-mail:** `admin@admin.com`
-* **Senha:** `123456`
-
----
-
-## 📚 Documentação e Testes (Swagger)
-
-A documentação completa dos contratos da API, modelos de dados e requisitos de autenticação foi gerada utilizando **Swagger/OpenAPI** [cite: 2].
-
-Após iniciar o servidor, acesse a interface interativa em:
-👉 **[http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)**
-
-### Como testar rotas protegidas pelo Swagger:
-1. Execute o endpoint `POST /auth/login` com as credenciais do admin inicial.
-2. Copie o token retornado na resposta (sem as aspas).
-3. Suba ao topo da página e clique no botão verde **"Authorize"**.
-4. Digite `Bearer` seguido de um espaço e cole o seu token (Ex: `Bearer eyJhbGci...`).
-5. Clique em "Authorize" e teste todos os endpoints diretamente pela interface!
-
----
-
-## 🧪 Testes Automatizados
-
-O projeto contempla uma base de testes automatizados unitários e de integração (utilizando o contexto do Spring Boot) para garantir a estabilidade das regras de negócio.
-Para rodar os testes localmente, execute:
-```bash
-./mvnw test
+```text
+http://localhost:8080
 ```
 
 ---
 
-## 👨‍💻 Desenvolvido por
-**Joseph Antony** - [GitHub](https://github.com/thejosephantony)
+# 📖 Swagger / OpenAPI
+
+A API possui documentação interativa através do Swagger UI.
+
+Após iniciar a aplicação:
+
+```text
+http://localhost:8080/swagger-ui/index.html
+```
+
+O Swagger permite visualizar os endpoints e executar requisições diretamente pela interface.
+
+### Fluxo para testar endpoints protegidos
+
+1. Fazer login através de `POST /auth/login`.
+2. Copiar o JWT retornado.
+3. Utilizar a autenticação Bearer disponível no Swagger.
+4. Informar o token.
+5. Executar os endpoints protegidos.
+
+---
+
+# 🖥️ Frontend
+
+O projeto também possui um frontend localizado em:
+
+```text
+/frontend
+```
+
+O frontend foi desenvolvido utilizando:
+
+- HTML;
+- CSS;
+- JavaScript.
+
+Ele consome a API REST e implementa o fluxo de autenticação através do JWT.
+
+Entre os recursos estão:
+
+- tela de login;
+- autenticação;
+- consumo da API;
+- acesso aos recursos protegidos;
+- gerenciamento de usuários.
+
+O frontend foi desenvolvido como complemento à API.
+
+---
+
+# 🧪 Testes realizados
+
+Os principais fluxos da API foram testados manualmente através do Swagger e do frontend.
+
+Foram verificados:
+
+### Autenticação
+
+- login com credenciais válidas;
+- login com credenciais inválidas;
+- geração de JWT;
+- acesso utilizando Bearer Token;
+- rejeição de requisições sem autenticação.
+
+### CRUD
+
+- criação de usuário;
+- listagem de usuários;
+- busca por ID;
+- consulta do próprio usuário;
+- atualização de usuário;
+- atualização do próprio perfil;
+- exclusão de usuário.
+
+### Autorização
+
+- acesso de usuário `USER`;
+- acesso de usuário `ADMIN`;
+- tentativa de operação administrativa por `USER`;
+- bloqueio de operações sem autenticação.
+
+### Respostas HTTP
+
+Foram verificados os principais códigos:
+
+```text
+200 OK
+201 Created
+204 No Content
+400 Bad Request
+401 Unauthorized
+403 Forbidden
+404 Not Found
+409 Conflict
+```
+
+---
+
+# 🔒 Segurança
+
+O projeto utiliza algumas medidas básicas de segurança:
+
+- autenticação stateless;
+- JWT para autenticação;
+- BCrypt para armazenamento das senhas;
+- controle de acesso baseado em roles;
+- validação dos dados recebidos;
+- DTOs para entrada e saída de dados;
+- não exposição da senha nas respostas;
+- segredo JWT configurado por variável de ambiente;
+- senha do banco configurada por variável de ambiente;
+- proteção dos endpoints através do Spring Security.
+
+---
+
+# 🧠 Decisões técnicas
+
+## JWT
+
+O JWT foi utilizado para implementar autenticação stateless.
+
+Isso permite que a API valide a identidade do usuário através do token enviado em cada requisição protegida.
+
+## BCrypt
+
+O BCrypt é utilizado para não armazenar as senhas dos usuários em texto puro no banco de dados.
+
+## PostgreSQL
+
+O PostgreSQL foi utilizado como banco de dados relacional para persistência dos usuários.
+
+## Spring Data JPA
+
+O Spring Data JPA foi utilizado para abstrair o acesso aos dados e implementar as operações de persistência.
+
+## DTOs
+
+DTOs são utilizados para separar os dados recebidos pela API das entidades persistidas no banco.
+
+Isso também evita que informações sensíveis, como a senha, sejam retornadas nas respostas.
+
+## Arquitetura em camadas
+
+A separação entre:
+
+```text
+Controller
+Service
+Repository
+```
+
+mantém as responsabilidades organizadas e facilita a manutenção da aplicação.
+
+---
+
+# ⚠️ Observações
+
+Este projeto possui foco educacional e demonstração de conceitos de:
+
+- desenvolvimento de APIs REST;
+- autenticação;
+- autorização;
+- JWT;
+- Spring Security;
+- persistência de dados;
+- integração frontend/backend.
+
+Para utilização em produção, recomenda-se adicionar controles adicionais de segurança, gerenciamento de segredos, políticas de expiração e renovação de tokens, configuração adequada de CORS, HTTPS, logs e demais requisitos de infraestrutura.
+
+---
+
+# 📌 Status do projeto
+
+```text
+✅ API REST
+✅ CRUD de usuários
+✅ Autenticação JWT
+✅ Spring Security
+✅ Roles USER / ADMIN
+✅ PostgreSQL
+✅ BCrypt
+✅ Validação de dados
+✅ Tratamento de exceções
+✅ Swagger/OpenAPI
+✅ Frontend
+✅ Testes manuais dos principais fluxos
+```
+
+---
+
+# 👨‍💻 Autor
+
+**Joseph Antony**
+
+GitHub:
+
+https://github.com/thejosephantony
+
+Repositório:
+
+https://github.com/thejosephantony/spring-auth-service

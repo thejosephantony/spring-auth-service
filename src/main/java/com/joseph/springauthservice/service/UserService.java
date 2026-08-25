@@ -1,17 +1,22 @@
 package com.joseph.springauthservice.service;
 
-import com.joseph.springauthservice.dto.CreateUserRequest;
 import com.joseph.springauthservice.dto.UpdateUserRequest;
 import com.joseph.springauthservice.entity.Role;
 import com.joseph.springauthservice.entity.User;
+import com.joseph.springauthservice.exception.UserAlreadyExistsException;
+import com.joseph.springauthservice.exception.UserNotFoundException;
 import com.joseph.springauthservice.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import com.joseph.springauthservice.exception.UserAlreadyExistsException;
-import com.joseph.springauthservice.exception.UserNotFoundException;
 
 import java.util.List;
 
+/**
+ * Responsável pelas regras de negócio relacionadas aos usuários.
+ *
+ * <p>Centraliza as operações de criação, consulta, atualização e remoção,
+ * incluindo validações de e-mail e criptografia de senhas.</p>
+ */
 @Service
 public class UserService {
 
@@ -45,32 +50,29 @@ public class UserService {
     }
 
     public User findById(Long id) {
-
         return userRepository.findById(id)
-            .orElseThrow(() ->
-                    new UserNotFoundException("Usuário não encontrado"));
+                .orElseThrow(() ->
+                        new UserNotFoundException("Usuário não encontrado"));
     }
 
     public User findByEmail(String email) {
-
         return userRepository.findByEmail(email)
-            .orElseThrow(() ->
-                    new UserNotFoundException("Usuário não encontrado"));
+                .orElseThrow(() ->
+                        new UserNotFoundException("Usuário não encontrado"));
     }
 
-    public User update(Long id, UpdateUserRequest request) { // <--- Altere aqui para UpdateUserRequest
+    public User update(Long id, UpdateUserRequest request) {
         User user = findById(id);
 
         if (!user.getEmail().equals(request.getEmail())
-            && userRepository.existsByEmail(request.getEmail())) {
-
-                throw new UserAlreadyExistsException("E-mail já cadastrado");
+                && userRepository.existsByEmail(request.getEmail())) {
+            throw new UserAlreadyExistsException("E-mail já cadastrado");
         }
 
         user.setName(request.getName());
         user.setEmail(request.getEmail());
 
-        // Se a senha foi informada na edição, atualiza codificando-a; caso contrário, mantém a atual
+        // Atualiza a senha somente quando uma nova senha é informada.
         if (request.getPassword() != null && !request.getPassword().isBlank()) {
             user.setPassword(passwordEncoder.encode(request.getPassword()));
         }
